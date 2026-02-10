@@ -45,13 +45,16 @@ Make a plot of **air time vs distance** (air time on the y-axis, distance on the
 ```{r}
 # Filter flights according to the criteria above,
 # then make the required plot.
+flights_LGA_16_2000 <- flights |> filter(origin == 'LGA') |> filter(day == 16) |> filter(distance < 2000)
+ggplot( data = flights_LGA_16_2000, mapping = aes( x = distance, y = air_time) )  +
+  geom_point(na.rm = TRUE)
 ```
 
 ## Brief written response
 
 In 2–4 sentences, describe what you observe in the plot. (For example: Is the relationship roughly linear? Are there any clear outliers?)
 
-**Your answer here:**
+**Your answer here:** The plot shows a linear positive relationship. As the distance increases, air time also increases. I would say there are no clear outliers, but the vertical lines at longer distances show that airtime seems to vary more as distance increases.
 
 ------------------------------------------------------------------------
 
@@ -63,7 +66,8 @@ Make a data frame of all rows of `flights` that have values for *both* `arr_time
 
 ```{r}
 # Create a new data frame that removes rows where arr_time or dep_time is NA.
-
+flights_not_na <- flights |> filter(!is.na(arr_time), !is.na(dep_time))
+view(flights_not_na)
 ```
 
 ## Filtering NAs (conceptual)
@@ -74,7 +78,7 @@ Make a data frame of all rows of `flights` that have values for *both* `arr_time
 
 Explain (in words) how you could prevent those `NA` values from appearing in the plot in the first place.
 
-**Your answer here:**
+**Your answer here:** You could prevent those NA values from appearing in the plot by removing them in the data set before using ggplot(). The function I performed created a new data set that I called flights_not_na. Then I can use this data set in the ggplot using data = flights_not_na and they would be removed and there would be no warning.
 
 ------------------------------------------------------------------------
 
@@ -95,14 +99,16 @@ If you like, you may break the data out (e.g., by airline or another variable) i
 # Create a new column for average speed.
 # (Hint: think carefully about units — air_time is in minutes.)
 # Then make a histogram or density plot.
-
+flight_speeds <- flights |> 
+  mutate( speed = distance / air_time * 60 ) |> filter(carrier %in% c('AA','UA','DL', 'B6'))
+ggplot( flight_speeds, aes (x=speed, color = carrier)) + geom_density() + labs( title = 'Density of Average Flight Speed by Airline', x= "Speed (miles per hour)")
 ```
 
 ## Brief written response
 
 Describe the main features of your speed distribution.
 
-**Your answer here:**
+**Your answer here:** The distribution for the United, American, and Delta airlines are similar. This may suggest that they have very similar average speeds across these 3 airlines. Most flights are around 425-450 miles per hour. B6, or JetBlue seems to stand out because it has a more spread out distribution. This curve suggests that JetBlue has more flights that are slower than the other airlines. For all airlines, there are not any extremely fast flights. 
 
 ------------------------------------------------------------------------
 
