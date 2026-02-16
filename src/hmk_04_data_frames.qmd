@@ -1,3 +1,9 @@
+---
+title: "Homework 04: Data frames and data wrangling"
+format: html
+editor: visual
+---
+
 Please read the entire chapter on data transformation fromR for Data Science before starting this homework.
 
 This homework relies on the nycflights13 package, which contains several data frames, including:
@@ -37,22 +43,26 @@ have a flight distance of less than 2000 miles
 Your code
 
 {r}
-flights |>
-  filter(origin == "LGA",
-         day == 16,
-         distance < 2000) |>
-  ggplot(aes(x = distance, y = air_time)) +
+# Filter flights according to the criteria above,
+# then make the required plot.
+
+lga_flights_16 <- flights |>
+     filter(origin == "LGA",
+            day == 16,
+            distance < 2000)
+
+
+ggplot(lga_flights_16, aes(x = distance, y = air_time)) +
   geom_point(alpha = 0.5) +
-  labs(title = "Air Time vs Distance (LGA, Day 16, <2000 miles)",
+  labs(title = "Air Time vs Distance (LGA, 16th of Month)",
        x = "Distance (miles)",
-       y = "Air Time (minutes)") +
-  theme_minimal()
+       y = "Air Time (minutes)")
 
 Brief written response
 
 In 2–4 sentences, describe what you observe in the plot. (For example: Is the relationship roughly linear? Are there any clear outliers?)
 
-Your answer here: The plot shows a strong positive relationship between distance and air time. As flight distance increases, air time also increases in a roughly linear pattern. There are a few points that fall slightly above or below the main trend, but there are no extreme outliers. Overall, the relationship appears very consistent.
+Your answer here: There is a linear relationship with air time increasing as distance increases.
 
 Question 2: Dealing with NAs
 
@@ -61,11 +71,11 @@ Make a data frame of all rows of flights that have values for both arr_time and 
 Your code
 
 {r}
-flights_complete <- flights |>
+# Create a new data frame that removes rows where arr_time or dep_time is NA.
+
+flights_no_na <- flights |>
   filter(!is.na(arr_time),
          !is.na(dep_time))
-
-head(flights_complete)
 
 Filtering NAs (conceptual)
 
@@ -75,7 +85,7 @@ Brief written response
 
 Explain (in words) how you could prevent those NA values from appearing in the plot in the first place.
 
-Your answer here: To prevent NA values from appearing in the plot in the first place, you would remove them from the dataset before passing the data to ggplot. This can be done by filtering the data to exclude rows where the relevant variables are NA, using a function like filter.
+Your answer here: To prevent NA values you have to filter them out before plotting. This removes rows with missing values so ggplot doesn't automatically drop them.
 
 Question 3: Adding columns
 
@@ -97,23 +107,21 @@ Your code
 # Then make a histogram or density plot.
 
 flights_speed <- flights |>
-  filter(!is.na(air_time),
-         !is.na(distance),
-         air_time > 0) |>
-  mutate(speed_mph = distance / (air_time / 60))
+     filter(!is.na(air_time), air_time > 0) |>
+     mutate(speed = distance / (air_time / 60))
 
-ggplot(flights_speed, aes(x = speed_mph)) +
+ggplot(flights_speed, aes(x = speed)) +
   geom_histogram(bins = 40) +
   labs(title = "Distribution of Average Flight Speeds",
        x = "Average Speed (miles per hour)",
-       y = "Count") +
-  theme_minimal()
+       y = "Count")
+
 
 Brief written response
 
 Describe the main features of your speed distribution.
 
-Your answer here: The distribution of flight speeds is mostly centered around about 400–500 miles per hour. Most flights cluster in this range, which is consistent with typical commercial jet speeds.
+Your answer here: There is a bell shape, with most flights around 400 mph.
 
 Rendering and submission (GitHub)
 
