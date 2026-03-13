@@ -43,15 +43,30 @@ Make a plot of **air time vs distance** (air time on the y-axis, distance on the
 ## Your code
 
 ```{r}
-# Filter flights according to the criteria above,
-# then make the required plot.
+filtered_flights <- flights %>%
+  filter(
+    origin == "LGA",
+    day == 16,
+    distance < 2000
+  ) %>%
+  drop_na(air_time, distance)
+
+ggplot(filtered_flights, aes(x = distance, y = air_time)) +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = "Air Time vs Distance",
+    subtitle = "The Graph",
+    x = "Distance (miles)",
+    y = "Air Time (minutes)"
+  ) +
+  theme_minimal()
 ```
 
 ## Brief written response
 
 In 2–4 sentences, describe what you observe in the plot. (For example: Is the relationship roughly linear? Are there any clear outliers?)
 
-**Your answer here:**
+**Your answer here:**The graph shows a clear positive relationship between distance and air time. As distance increases, air time also increases in a mostly straight-line pattern.There are only a few small outlines, but overall the pattern is very consistent.
 
 ------------------------------------------------------------------------
 
@@ -62,7 +77,13 @@ Make a data frame of all rows of `flights` that have values for *both* `arr_time
 ## Your code
 
 ```{r}
-# Create a new data frame that removes rows where arr_time or dep_time is NA.
+library(tidyverse)
+library(nycflights13)
+
+flights_complete <- flights %>%
+  filter(!is.na(arr_time), !is.na(dep_time))
+
+head(flights_complete)
 
 ```
 
@@ -74,7 +95,7 @@ Make a data frame of all rows of `flights` that have values for *both* `arr_time
 
 Explain (in words) how you could prevent those `NA` values from appearing in the plot in the first place.
 
-**Your answer here:**
+**Your answer here:**To prevent NA values from appearing in the plot, I would filter them out before making the graph. I can use ***`filter()`*** together with ***`!is.na()`*** to remove rows where important variables have missing values. This way, ggplot only receives clean data and won’t show a warning message.
 
 ------------------------------------------------------------------------
 
@@ -92,9 +113,22 @@ If you like, you may break the data out (e.g., by airline or another variable) i
 ## Your code
 
 ```{r}
-# Create a new column for average speed.
-# (Hint: think carefully about units — air_time is in minutes.)
-# Then make a histogram or density plot.
+library(tidyverse)
+library(nycflights13)
+
+speed_df <- flights %>%
+  filter(!is.na(air_time), !is.na(distance)) %>%
+  mutate(speed = distance / (air_time / 60))
+
+ggplot(speed_df, aes(x = speed)) +
+  geom_density() +
+  labs(
+    title = "Density Plot",
+    x = "Speed (miles per hour)",
+    y = "Density"
+  ) +
+  theme_minimal()
+
 
 ```
 
@@ -102,7 +136,7 @@ If you like, you may break the data out (e.g., by airline or another variable) i
 
 Describe the main features of your speed distribution.
 
-**Your answer here:**
+**Your answer here:**The density plot shows that most flights have an average speed around 400–450 miles per hour. The curve is slightly skewed to the right, which means a few flights are much faster than most.the speeds are fairly consistent for the majority of flights, with only a small number of unusually slow or fast flights
 
 ------------------------------------------------------------------------
 
