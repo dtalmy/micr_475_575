@@ -11,6 +11,7 @@ if_else(x > 0, "+ve", "-ve", "???")
 1:10 %/% 3
 1:10 %% 3
 
+# an example of %/% in a practical workflow
 flights |> 
   group_by(hour = sched_dep_time %/% 100) |> 
   summarize(prop_cancelled = mean(is.na(dep_time)), n = n()) |> 
@@ -20,7 +21,6 @@ flights |>
   geom_point(aes(size = n))
 
 # Factors
-
 x1 <- c("Dec", "Apr", "Jan", "Mar")
 x2 <- c("Dec", "Apr", "Jam", "Mar")
 
@@ -44,10 +44,9 @@ Jan,12
 Feb,56
 Mar,12"
 
-df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
-
 df <- read_csv(csv)
 df
+df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
 
 # dates and times
 
